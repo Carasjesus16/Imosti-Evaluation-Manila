@@ -99,6 +99,8 @@ function Analytics() {
     student: "",
   });
 
+  const [stud, setstud] = useState("");
+
   async function printEventHandler() {
     try {
       setLoadingPrint(true);
@@ -265,7 +267,7 @@ function Analytics() {
         date: date,
         barChartData: barChartData, // Include current bar chart data
         listcriteria: selectedCriteria,
-        student: studentCount,
+        student: stud,
       };
 
       setSurveyData(newSurveyData);
@@ -452,6 +454,10 @@ function Analytics() {
       };
     });
 
+    const uniqueTrainings = [...new Set(filtered.map(item => item.training_id))];
+    const uniqueTrainingCount = uniqueTrainings.length;
+    console.log("Total unique trainings:", uniqueTrainingCount);
+    setstud(uniqueTrainingCount)
     setSelectedCriteria(listCriterias);
     setBarChartData(barChartData);
   }, [
