@@ -115,10 +115,23 @@ function Maintenance() {
     try {
       setSubmitEvaluationLoading(true);
 
+      const { data: criteriaData, error: criteriaError } = await supabase
+         .from('Criteria-Questioner')
+         .select('id')
+         .eq('label', evaluation.criteria);
+
+      if (criteriaError) {
+         console.error('Error fetching Criteria ID:', criteriaError);
+       return;
+        }
+
+        const Criteria_ids = criteriaData[0]?.id;
+
       const { error: insertError } = await supabase.from("Questioner").insert({
         Criteria: evaluation.criteria,
         Question: evaluation.question,
         created_at: new Date(),
+        Criteria_id: Criteria_ids,
       });
 
       if (insertError) {
