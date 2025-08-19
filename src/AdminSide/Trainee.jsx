@@ -93,7 +93,7 @@ function Trainee() {
           const { error: deletehistory } = await supabase
           .from("history")
           .insert({
-            transaction: "Delete Lerners Record",
+            transaction: "Delete Learners Record",
             Account: account?.Email,
             created_at: new Date(),
           });
