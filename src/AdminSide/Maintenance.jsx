@@ -494,7 +494,7 @@ function Maintenance() {
     const feedbackData = (await supabase.from("Feedback-Question").select()).data;
     const CriteriaData = (await supabase.from("Criteria-Questioner").select()).data;
     const courselist = (await supabase.from("Course").select()).data;
-    setlistcourses(courselist)
+    setlistcourses(courselist);
     setQuestions(questionData);
     setFeedbacks(feedbackData);
     setCriteriaQ(CriteriaData)
@@ -1021,7 +1021,7 @@ function Maintenance() {
               fw='bold'
               size='xl'
             >
-              Training Evaluation
+              Criteria Question
             </Text>
             <div
               style={{
@@ -1170,7 +1170,7 @@ function Maintenance() {
           fw='bold'
           size='xl'
         >
-          Criteria Questioner
+          Criteria
         </Text>
         <div
           style={{
