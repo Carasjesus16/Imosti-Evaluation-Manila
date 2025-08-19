@@ -242,7 +242,7 @@ function Settings() {
     </thead>
     <tbody>
      ${historylist
-        .sort((a, b) => new Date(a.created_at) - new Date(b.created_at))
+        .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
         .map((v) => {
         const formattedDate = new Date(v.created_at).toLocaleString();
         return `
@@ -491,7 +491,7 @@ function Settings() {
       </Table.Thead>
       <Table.Tbody>
       {historylist
-        .sort((a, b) => new Date(a.created_at) - new Date(b.created_at))
+        .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
         .map((v) => {
         const formattedDate = new Date(v.created_at).toLocaleString();
         return (
