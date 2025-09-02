@@ -127,7 +127,7 @@ function Trainee() {
       
         await fetchData();
         closeDeleteRecord();
-        setcomfirmdelete(""); // to reset the input field
+        setcomfirmdelete(""); 
         console.log("Delete Success");
         console.log(selectedDateRange[0], selectedDateRange[1]);
         console.log(checkedStudents);
