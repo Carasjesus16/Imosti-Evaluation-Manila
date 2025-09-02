@@ -95,6 +95,7 @@ function Trainee() {
 
         await fetchData();
         closeDeleteRecord();
+        setcomfirmdelete("");
         console.log("Delete Success");
         console.log(selectedDateRange[0], selectedDateRange[1]);
         console.log(checkedStudents);
