@@ -17,7 +17,7 @@ import {
   TextInput,
   Tooltip,
 } from "@mantine/core";
-import supabase from "../supabase";
+import supabase, { getAccount } from "../supabase";
 import {
   IconArrowLeft,
   IconChevronDown,
@@ -34,10 +34,28 @@ import { toProper } from "../helpers/helper";
 import { DatePicker, MonthPicker, YearPicker } from "@mantine/dates";
 import AdminMainPage from "./AdminMainPage";
 
+
 function convertDateRangeToString(dateRange) {
+  if (!dateRange || typeof dateRange !== "string") return "";
+
   const [f, s] = dateRange.substring(2, dateRange.length - 2).split('","');
-  const options = { year: "numeric", month: "short", day: "2-digit" };
-  return `${new Date(f).toLocaleDateString("en-US", options)} to ${new Date(s).toLocaleDateString("en-US", options)}`;
+
+  const options = { year: "numeric", month: "2-digit", day: "2-digit" };
+  const startDate = new Date(f);
+  const endDate = new Date(s);
+
+  const isStartValid = !isNaN(startDate.getTime());
+  const isEndValid = !isNaN(endDate.getTime());
+
+  if (isStartValid && isEndValid) {
+      return `${startDate.toLocaleDateString("en-US", options)} to ${endDate.toLocaleDateString("en-US", options)}`;
+  } else if (isStartValid) {
+      return `${startDate.toLocaleDateString("en-US", options)}`;
+  } else if (isEndValid) {
+      return `${endDate.toLocaleDateString("en-US", options)}`;
+  } else {
+      return "";
+  }
 }
 function Trainee() {
   const { id: course_id } = useParams();
@@ -62,6 +80,7 @@ function Trainee() {
     [null, null],
     [null],
   );
+  const account = getAccount();
   const [filterState, { open: openFilterState, close: closeFilterState }] =
     useDisclosure(false);
   const [storageData, setStorageData] = useState({
@@ -88,11 +107,24 @@ function Trainee() {
           .delete()
           .in("id", studentIds);
 
+          const { error: deletehistory } = await supabase
+          .from("history")
+          .insert({
+            transaction: "Delete Learners Record",
+            Account: account?.Email,
+            created_at: new Date(),
+          });
+
+          if (deletehistory) {
+            console.log(`Something Error: ${deletehistory.message}`);
+            return;
+          }
+
         if (deleteError) {
           console.log(`Something Error: ${deleteError.message}`);
           return;
         }
-
+      
         await fetchData();
         closeDeleteRecord();
         setcomfirmdelete(""); // to reset the input field
@@ -657,7 +689,7 @@ function Trainee() {
         <div class="divider"></div>
         <div class="content">
           <div class="course-header">
-            <p class="course-title">${checkedStudents.length} Trainees Evaluation</p>
+            <p class="course-title">${checkedStudents.length} Learners Evaluation</p>
             <p>${new Date().toDateString()}</p>
           </div>
           <p class="course-description">
@@ -1041,7 +1073,7 @@ function Trainee() {
           visible={loadingPage}
         />
       }
-      title='Trainee'
+      title='Learners'
       rightSection={
         <div className='flex items-center'>
           <TextInput
@@ -1079,7 +1111,7 @@ function Trainee() {
                 leftSection={<IconPrinter size={20} />}
                 onClick={handlePrint}
               >
-                Print Trainees ({checkedStudents.length})
+                Print Learners ({checkedStudents.length})
               </Menu.Item>
               <Menu.Item
                 leftSection={<IconPrinter size={20} />}
