@@ -12,6 +12,8 @@ import {
   PasswordInput,
   Portal,
   ScrollAreaAutosize,
+  Select,
+  Skeleton,
   Table,
   Text,
   TextInput,
@@ -73,6 +75,7 @@ function Trainee() {
   const [Criterias, setCriterias] = useState([]);
   const [search, setSearch] = useState("");
   const [courses, setCourses] = useState([]);
+  const [selectedBatch, setSelectedBatch] = useState("all");
   const [selectedFilter, setSelectedFilter] = useState("Select");
   const [comfirmdelete, setcomfirmdelete] = useState();
   const [mapingAdmin, setmapingAdmin] = useState([]);
@@ -88,6 +91,10 @@ function Trainee() {
     form_number: "",
     issued_date: "",
   });
+
+  const handleBatchChange = (e) => {
+    setSelectedBatch(e.target.value);
+  };
 
   async function DeleteRecords() {
     const checkedStudents = students.filter((student) => student.checked);
@@ -127,6 +134,7 @@ function Trainee() {
       
         await fetchData();
         closeDeleteRecord();
+        setcomfirmdelete("");
         console.log("Delete Success");
         console.log(selectedDateRange[0], selectedDateRange[1]);
         console.log(checkedStudents);
@@ -190,11 +198,16 @@ function Trainee() {
   const filteredStudents = students.filter((v) => {
     if (!search) return true;
     const s = search.toLowerCase().trim();
+
+    if (selectedBatch !== "all" && v.batch !== selectedBatch) {
+      return false;
+    }
+
     return (
       v.Name.toLowerCase().includes(s) ||
-      convertDateRangeToString(v.TrainingD).includes(s) ||
       v.Reg.toLowerCase().includes(s) ||
-      new Date(v.DateN).toDateString().includes(s)
+      v.Instructor.toLowerCase().includes(s) ||
+      new Date(v.DateN).toDateString().includes(s) 
     );
   });
 
@@ -1122,6 +1135,8 @@ function Trainee() {
           </Menu>
         </div>
       }
+    
+    
     >
       <Modal
         title={<span style={{ color: "white" }}>{selectedStudent?.Name}</span>}
@@ -1282,11 +1297,12 @@ function Trainee() {
           )}
         </div>
       </Modal>
-
+          <div style={{display:'flex' , justifyContent:'space-around'}}>
       <Button
         onClick={() => {
           openDeleteRecord();
         }}
+        color="red"
         size='xs'
         leftSection={<IconTrash size={19} />}
         mb={10}
@@ -1295,6 +1311,22 @@ function Trainee() {
       >
         Delete
       </Button>
+
+       <div style={{display: 'flex', justifyContent: 'flex-end'}}>
+           <select  radius="md" onChange={handleBatchChange} value={selectedBatch} >
+           <option value="all">Select All Batch #</option>
+             {students
+             ?.map((s) => s?.batch)  // Extract batches
+             .filter((value, index, self) => value && self.indexOf(value) === index)  // Remove duplicates
+             .sort((a, b) => a - b)
+             .map((batch, index) => (
+             <option key={index} value={batch}>
+              {batch}
+             </option>
+              ))}
+            </select>
+        </div>
+      </div>
 
       <Table>
         <Table.Thead>
@@ -1311,7 +1343,7 @@ function Trainee() {
                         }
                         return v;
                       }
-
+                      
                       return { ...v, checked: e.currentTarget.checked };
                     }),
                   );
@@ -1324,6 +1356,7 @@ function Trainee() {
             <Table.Th>Company</Table.Th>
             <Table.Th>Instructor</Table.Th>
             <Table.Th>Date</Table.Th>
+            <Table.Th>Batch #</Table.Th>
             <Table.Th>View</Table.Th>
           </Table.Tr>
         </Table.Thead>
@@ -1369,6 +1402,7 @@ function Trainee() {
                     day: "2-digit",
                   })}
                 </Table.Td>
+                <Table.Td>{stud.batch}</Table.Td>
                 <Table.Td>
                   <ActionIcon
                     onClick={() => {
