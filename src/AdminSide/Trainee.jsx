@@ -207,7 +207,9 @@ function Trainee() {
       v.Name.toLowerCase().includes(s) ||
       v.Reg.toLowerCase().includes(s) ||
       v.Instructor.toLowerCase().includes(s) ||
-      new Date(v.DateN).toDateString().includes(s)
+      new Date(v.DateN).toDateString().includes(s) ||
+      v.batch.includes(s)
+      
     );
   });
 
