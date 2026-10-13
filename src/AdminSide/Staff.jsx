@@ -400,11 +400,13 @@ function Staff() {
               />
               <MultiSelect
                 {...staffForm.getInputProps("access")}
-                label='Allowed Page'
-                placeholder='Enter Allowed Page'
-                data={accessData}
-                required
-                checkIconPosition='right'
+  value={Array.isArray(staffForm.values.access) ? staffForm.values.access : []}
+  onChange={(value) => staffForm.setFieldValue('access', value)}
+  label='Allowed Page'
+  placeholder='Enter Allowed Page'
+  data={accessData}
+  required
+  checkIconPosition='right'
                 styles={{
                   dropdown: {
                     border: "1px solid #0005",
